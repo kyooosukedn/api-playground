@@ -8,6 +8,7 @@ interface RequestBuilderProps {
   onRequest: (request: ApiRequest) => void;
   apiSpec: ApiSpec | null;
   isLoading: boolean;
+  defaultEndpoint?: string;
 }
 
 const METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH"] as const;
@@ -19,16 +20,27 @@ const METHOD_COLORS: Record<string, string> = {
   PATCH: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
 };
 
-export function RequestBuilder({ onRequest, apiSpec, isLoading }: RequestBuilderProps) {
+export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint }: RequestBuilderProps) {
   const [method, setMethod] = useState<"GET" | "POST" | "PUT" | "DELETE" | "PATCH">("GET");
   const [url, setUrl] = useState("");
   const [headers, setHeaders] = useState<Record<string, string>>({});
   const [body, setBody] = useState<any>({});
   const [queryParams, setQueryParams] = useState<Record<string, string>>({});
 
-  // Pre-fill with example if API spec is available
+  // Pre-fill with example if API spec is available or defaultEndpoint is provided
   useEffect(() => {
-    if (apiSpec?.paths) {
+    if (defaultEndpoint) {
+      // If defaultEndpoint is provided, use it
+      setUrl(`https://api.example.com${defaultEndpoint}`);
+      // Try to find the method for this endpoint from the spec
+      if (apiSpec?.paths?.[defaultEndpoint]) {
+        const firstMethod = Object.keys(apiSpec.paths[defaultEndpoint])[0];
+        if (firstMethod) {
+          setMethod(firstMethod.toUpperCase() as any);
+        }
+      }
+    } else if (apiSpec?.paths) {
+      // Otherwise, use the first path from the spec
       const firstPath = Object.keys(apiSpec.paths)[0];
       const firstMethod = Object.keys(apiSpec.paths[firstPath])[0];
       if (firstPath) {
@@ -36,7 +48,7 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading }: RequestBuilder
         setMethod(firstMethod.toUpperCase() as any);
       }
     }
-  }, [apiSpec]);
+  }, [apiSpec, defaultEndpoint]);
 
   const addHeader = () => {
     const key = `header-${Date.now()}`;
