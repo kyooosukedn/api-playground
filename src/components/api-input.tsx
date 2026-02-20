@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Upload, FileText, CheckCircle, XCircle } from "lucide-react";
+import yaml from "js-yaml";
 
 interface ApiInputProps {
   onSpecLoad: (spec: any) => void;
@@ -11,22 +12,31 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
   const [specText, setSpecText] = useState("");
   const [error, setError] = useState("");
   const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [specFormat, setSpecFormat] = useState<"JSON" | "YAML" | null>(null);
+  const [parsedSpec, setParsedSpec] = useState<any>(null);
 
-  const validateSpec = (text: string) => {
+  const validateSpec = (text: string): any => {
+    // Try JSON first
     try {
       const parsed = JSON.parse(text);
-      // Basic validation - check if it has some OpenAPI fields
       if (parsed.openapi || parsed.swagger || parsed.paths || parsed.endpoints) {
-        return parsed;
+        return { parsed, format: "JSON" as const };
       }
-      throw new Error("Invalid API specification format");
-    } catch (e) {
-      // Try YAML parsing (simple check)
-      if (text.includes("openapi:") || text.includes("swagger:") || text.includes("paths:")) {
-        // For MVP, we'll accept YAML format but note it would need js-yaml
-        return { raw: text, format: "yaml" };
+      throw new Error("Invalid API specification format. Must be a valid OpenAPI/Swagger spec.");
+    } catch {
+      // If not valid JSON, try YAML
+      try {
+        const parsed = yaml.load(text, { schema: yaml.JSON_SCHEMA }) as any;
+        if (parsed && (parsed.openapi || parsed.swagger || parsed.paths || parsed.endpoints)) {
+          return { parsed, format: "YAML" as const };
+        }
+        throw new Error("Invalid API specification format. Must contain 'openapi', 'swagger', 'paths', or 'endpoints' fields.");
+      } catch (yamlError) {
+        if (yamlError instanceof Error && yamlError.message.includes("Invalid API")) {
+          throw yamlError;
+        }
+        throw new Error("Could not parse specification. Please provide valid JSON or YAML.");
       }
-      throw e;
     }
   };
 
@@ -35,11 +45,15 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
     setSpecText(text);
     setError("");
     setIsValid(null);
+    setSpecFormat(null);
+    setParsedSpec(null);
 
     if (text.trim()) {
       try {
-        const parsed = validateSpec(text);
+        const { parsed, format } = validateSpec(text);
         setIsValid(true);
+        setSpecFormat(format);
+        setParsedSpec(parsed);
       } catch (err) {
         setIsValid(false);
         setError(err instanceof Error ? err.message : "Invalid format");
@@ -56,11 +70,15 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
       const content = event.target?.result as string;
       setSpecText(content);
       try {
-        const parsed = validateSpec(content);
+        const { parsed, format } = validateSpec(content);
         setIsValid(true);
+        setSpecFormat(format);
+        setParsedSpec(parsed);
         setError("");
       } catch (err) {
         setIsValid(false);
+        setSpecFormat(null);
+        setParsedSpec(null);
         setError(err instanceof Error ? err.message : "Invalid file format");
       }
     };
@@ -68,14 +86,8 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
   };
 
   const handleLoad = () => {
-    if (!isValid || !specText) return;
-
-    try {
-      const parsed = validateSpec(specText);
-      onSpecLoad(parsed);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load specification");
-    }
+    if (!isValid || !parsedSpec) return;
+    onSpecLoad(parsedSpec);
   };
 
   return (
@@ -109,7 +121,14 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
               <FileText className="w-4 h-4" />
               <span>Spec loaded</span>
               {isValid === true && (
-                <CheckCircle className="w-4 h-4 text-green-500" />
+                <>
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  {specFormat && (
+                    <span className="px-1.5 py-0.5 text-xs font-semibold rounded bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                      {specFormat}
+                    </span>
+                  )}
+                </>
               )}
               {isValid === false && (
                 <XCircle className="w-4 h-4 text-red-500" />
@@ -152,7 +171,7 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
 
       <button
         onClick={handleLoad}
-        disabled={!isValid || !specText}
+        disabled={!isValid || !parsedSpec}
         className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
       >
         <FileText className="w-5 h-5" />
