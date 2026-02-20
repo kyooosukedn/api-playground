@@ -23,35 +23,38 @@ export function Navigation() {
         <div className="flex items-center gap-4">
           <Link
             href="/"
+            aria-current={isActive("/") ? "page" : undefined}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
               isActive("/")
                 ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
                 : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >
-            <Home className="w-4 h-4" />
+            <Home className="w-4 h-4" aria-hidden="true" />
             <span className="hidden sm:inline">Home</span>
           </Link>
           <Link
             href="/playground"
+            aria-current={isActive("/playground") ? "page" : undefined}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
               isActive("/playground")
                 ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
                 : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >
-            <Play className="w-4 h-4" />
+            <Play className="w-4 h-4" aria-hidden="true" />
             <span className="hidden sm:inline">Playground</span>
           </Link>
           <Link
             href="/history"
+            aria-current={isActive("/history") ? "page" : undefined}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
               isActive("/history")
                 ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200"
                 : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >
-            <History className="w-4 h-4" />
+            <History className="w-4 h-4" aria-hidden="true" />
             <span className="hidden sm:inline">History</span>
           </Link>
 

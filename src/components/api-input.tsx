@@ -85,18 +85,19 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
       </h2>
 
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="api-file-upload" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Upload OpenAPI/Swagger File (JSON or YAML)
         </label>
         <div className="flex items-center gap-4">
-          <label className="flex-1 cursor-pointer">
+          <label htmlFor="api-file-upload" className="flex-1 cursor-pointer">
             <div className="flex items-center justify-center gap-2 px-6 py-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
-              <Upload className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              <Upload className="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" />
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {specText ? "Replace file" : "Choose file"}
               </span>
             </div>
             <input
+              id="api-file-upload"
               type="file"
               accept=".json,.yaml,.yml"
               onChange={handleFileUpload}
@@ -119,10 +120,11 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
       </div>
 
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="api-spec-textarea" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Or paste OpenAPI/JSON specification
         </label>
         <textarea
+          id="api-spec-textarea"
           value={specText}
           onChange={handleTextChange}
           placeholder='{
@@ -140,10 +142,11 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
     }
   }
 }'
+          aria-describedby={error ? "api-spec-error" : undefined}
           className="w-full h-64 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-mono text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
         />
         {error && (
-          <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
+          <p id="api-spec-error" role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
         )}
       </div>
 

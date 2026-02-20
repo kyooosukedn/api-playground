@@ -54,16 +54,17 @@ export function ResponseViewer({ response }: ResponseViewerProps) {
         </div>
         <button
           onClick={copyToClipboard}
+          aria-label={copied ? "Copied to clipboard" : "Copy response to clipboard"}
           className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors"
         >
           {copied ? (
             <>
-              <Check className="w-4 h-4" />
+              <Check className="w-4 h-4" aria-hidden="true" />
               Copied!
             </>
           ) : (
             <>
-              <Copy className="w-4 h-4" />
+              <Copy className="w-4 h-4" aria-hidden="true" />
               Copy
             </>
           )}
@@ -74,17 +75,19 @@ export function ResponseViewer({ response }: ResponseViewerProps) {
       <div className="border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={() => toggleSection("body")}
+          aria-expanded={expandedSections.body}
+          aria-controls="response-body-content"
           className="w-full px-6 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           <h3 className="font-semibold text-gray-900 dark:text-white">Response Body</h3>
           {expandedSections.body ? (
-            <ChevronDown className="w-5 h-5 text-gray-500" />
+            <ChevronDown className="w-5 h-5 text-gray-500" aria-hidden="true" />
           ) : (
-            <ChevronRight className="w-5 h-5 text-gray-500" />
+            <ChevronRight className="w-5 h-5 text-gray-500" aria-hidden="true" />
           )}
         </button>
         {expandedSections.body && (
-          <div className="px-6 pb-4">
+          <div id="response-body-content" className="px-6 pb-4">
             <pre className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 overflow-x-auto">
               <code className="text-sm">
                 {typeof response.data === "object"
@@ -100,17 +103,19 @@ export function ResponseViewer({ response }: ResponseViewerProps) {
       <div>
         <button
           onClick={() => toggleSection("headers")}
+          aria-expanded={expandedSections.headers}
+          aria-controls="response-headers-content"
           className="w-full px-6 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           <h3 className="font-semibold text-gray-900 dark:text-white">Response Headers</h3>
           {expandedSections.headers ? (
-            <ChevronDown className="w-5 h-5 text-gray-500" />
+            <ChevronDown className="w-5 h-5 text-gray-500" aria-hidden="true" />
           ) : (
-            <ChevronRight className="w-5 h-5 text-gray-500" />
+            <ChevronRight className="w-5 h-5 text-gray-500" aria-hidden="true" />
           )}
         </button>
         {expandedSections.headers && (
-          <div className="px-6 pb-4">
+          <div id="response-headers-content" className="px-6 pb-4">
             <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
               {Object.entries(response.headers).map(([key, value]) => (
                 <div key={key} className="flex py-1 border-b border-gray-200 dark:border-gray-700 last:border-0">

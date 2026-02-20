@@ -51,7 +51,7 @@ export function RequestHistory({ history, onReplay }: RequestHistoryProps) {
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <History className="w-5 h-5" />
+          <History className="w-5 h-5" aria-hidden="true" />
           Request History
         </h2>
         {history.length > 0 && (
@@ -59,7 +59,7 @@ export function RequestHistory({ history, onReplay }: RequestHistoryProps) {
             onClick={clearHistory}
             className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 flex items-center gap-1"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-4 h-4" aria-hidden="true" />
             Clear
           </button>
         )}
@@ -67,12 +67,13 @@ export function RequestHistory({ history, onReplay }: RequestHistoryProps) {
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search history..."
+          aria-label="Search request history"
           className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
@@ -87,10 +88,11 @@ export function RequestHistory({ history, onReplay }: RequestHistoryProps) {
           </p>
         ) : (
           filteredHistory.map((request) => (
-            <div
+            <button
               key={request.id}
-              className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer group"
+              className="w-full text-left p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer group"
               onClick={() => onReplay(request)}
+              aria-label={`Replay ${request.method} ${request.url}`}
             >
               <div className="flex items-start gap-3">
                 <span
@@ -106,9 +108,9 @@ export function RequestHistory({ history, onReplay }: RequestHistoryProps) {
                     {formatDate(request.timestamp)}
                   </p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors mt-1" />
+                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors mt-1" aria-hidden="true" />
               </div>
-            </div>
+            </button>
           ))
         )}
       </div>
