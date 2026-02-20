@@ -55,31 +55,22 @@ export default function PlaygroundPage() {
     setCurrentRequest(request);
 
     try {
-      const startTime = Date.now();
-      const res = await fetch(request.url, {
-        method: request.method,
-        headers: request.headers,
-        body: request.method !== "GET" ? JSON.stringify(request.body) : undefined,
+      const res = await fetch("/api/proxy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: request.url,
+          method: request.method,
+          headers: request.headers,
+          body: request.body,
+        }),
       });
-      const duration = Date.now() - startTime;
-      const contentType = res.headers.get("content-type") || "";
-      const isJson = contentType.includes("application/json");
-
-      let responseData: any;
-      if (isJson) {
-        responseData = await res.json();
-      } else {
-        responseData = await res.text();
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error || `Proxy error: ${res.status}`);
       }
-
-      const apiResponse: ApiResponse = {
-        status: res.status,
-        statusText: res.statusText,
-        data: responseData,
-        headers: Object.fromEntries(res.headers.entries()),
-        duration,
-        timestamp: new Date().toISOString(),
-      };
+      const result = await res.json();
+      const apiResponse: ApiResponse = result;
 
       setResponse(apiResponse);
 
