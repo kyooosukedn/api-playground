@@ -122,6 +122,7 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
         <select
           value={method}
           onChange={(e) => setMethod(e.target.value as any)}
+          aria-label="HTTP method"
           className={`px-4 py-3 rounded-lg font-semibold text-sm ${METHOD_COLORS[method]} border-none cursor-pointer`}
         >
           {METHODS.map((m) => (
@@ -135,6 +136,7 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://api.example.com/endpoint"
+          aria-label="Request URL"
           className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
@@ -175,9 +177,10 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
               />
               <button
                 onClick={() => removeQueryParam(key)}
+                aria-label={`Remove query parameter ${key}`}
                 className="p-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           ))}
@@ -220,9 +223,10 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
               />
               <button
                 onClick={() => removeHeader(key)}
+                aria-label={`Remove header ${key}`}
                 className="p-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           ))}
