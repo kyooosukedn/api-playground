@@ -119,7 +119,9 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
 
       {/* Method and URL */}
       <div className="mb-6 flex gap-4">
+        <label htmlFor="http-method" className="sr-only">HTTP method</label>
         <select
+          id="http-method"
           value={method}
           onChange={(e) => setMethod(e.target.value as any)}
           className={`px-4 py-3 rounded-lg font-semibold text-sm ${METHOD_COLORS[method]} border-none cursor-pointer`}
@@ -130,7 +132,9 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
             </option>
           ))}
         </select>
+        <label htmlFor="request-url" className="sr-only">Request URL</label>
         <input
+          id="request-url"
           type="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
@@ -164,6 +168,7 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
                   setQueryParams(newParams);
                 }}
                 placeholder="Parameter name"
+                aria-label="Query parameter name"
                 className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
               />
               <input
@@ -171,13 +176,15 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
                 value={value}
                 onChange={(e) => updateQueryParam(key, e.target.value)}
                 placeholder="Value"
+                aria-label="Query parameter value"
                 className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
               />
               <button
                 onClick={() => removeQueryParam(key)}
+                aria-label="Remove query parameter"
                 className="p-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           ))}
@@ -209,6 +216,7 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
                   setHeaders(newHeaders);
                 }}
                 placeholder="Header name"
+                aria-label="Header name"
                 className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
               />
               <input
@@ -216,13 +224,15 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
                 value={value}
                 onChange={(e) => updateHeader(key, e.target.value)}
                 placeholder="Value"
+                aria-label="Header value"
                 className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
               />
               <button
                 onClick={() => removeHeader(key)}
+                aria-label="Remove header"
                 className="p-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           ))}
@@ -244,6 +254,7 @@ export function RequestBuilder({ onRequest, apiSpec, isLoading, defaultEndpoint 
               }
             }}
             placeholder='{\n  "key": "value"\n}'
+            aria-label="Request body (JSON)"
             className="w-full h-32 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-mono text-sm resize-none"
           />
         </div>
