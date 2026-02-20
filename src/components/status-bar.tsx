@@ -26,6 +26,11 @@ export function StatusBar({ isLoading, response }: StatusBarProps) {
           </div>
         )}
 
+        {/* Proxy Badge */}
+        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+          🔒 via proxy
+        </div>
+
         {/* Response Status */}
         {response && !isLoading && (
           <div className="flex items-center gap-2">
