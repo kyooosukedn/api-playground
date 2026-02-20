@@ -7,81 +7,37 @@ import { ResponseViewer } from "@/components/response-viewer";
 import { StatusBar } from "@/components/status-bar";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import Link from "next/link";
-import { ApiRequest, ApiResponse } from "@/types";
+import { ApiRequest } from "@/types";
+import { storage } from "@/lib/storage";
+import { useApiRequest } from "@/lib/hooks/useApiRequest";
 
 export default function DocsPage() {
   const params = useParams();
   const endpointId = params.id as string;
   const [apiSpec, setApiSpec] = useState<any>(null);
-  const [response, setResponse] = useState<ApiResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [endpointDoc, setEndpointDoc] = useState<any>(null);
+  const { sendRequest, response, isLoading } = useApiRequest();
 
   useEffect(() => {
     // Load API spec from localStorage
-    const savedSpec = localStorage.getItem("api-spec");
-    if (savedSpec) {
-      try {
-        const spec = JSON.parse(savedSpec);
-        setApiSpec(spec);
+    const spec = storage.getApiSpec();
+    if (spec) {
+      setApiSpec(spec);
 
-        // Find endpoint documentation
-        if (spec.paths && spec.paths[endpointId]) {
-          setEndpointDoc(spec.paths[endpointId]);
-        } else if (spec.endpoints) {
-          const endpoint = spec.endpoints.find((e: any) => e.path === endpointId);
-          if (endpoint) {
-            setEndpointDoc(endpoint);
-          }
+      // Find endpoint documentation
+      if (spec.paths && spec.paths[endpointId]) {
+        setEndpointDoc(spec.paths[endpointId]);
+      } else if (spec.endpoints) {
+        const endpoint = spec.endpoints.find((e: any) => e.path === endpointId);
+        if (endpoint) {
+          setEndpointDoc(endpoint);
         }
-      } catch (e) {
-        console.error("Failed to load API spec:", e);
       }
     }
   }, [endpointId]);
 
   const handleSendRequest = async (request: ApiRequest) => {
-    setIsLoading(true);
-    setResponse(null);
-
-    try {
-      const startTime = Date.now();
-      const res = await fetch(request.url, {
-        method: request.method,
-        headers: request.headers,
-        body: request.method !== "GET" ? JSON.stringify(request.body) : undefined,
-      });
-      const duration = Date.now() - startTime;
-      const contentType = res.headers.get("content-type") || "";
-      const isJson = contentType.includes("application/json");
-
-      let responseData: any;
-      if (isJson) {
-        responseData = await res.json();
-      } else {
-        responseData = await res.text();
-      }
-
-      setResponse({
-        status: res.status,
-        statusText: res.statusText,
-        data: responseData,
-        headers: Object.fromEntries(res.headers.entries()),
-        duration,
-        timestamp: new Date().toISOString(),
-      });
-    } catch (error) {
-      setResponse({
-        status: 0,
-        statusText: "Network Error",
-        data: error instanceof Error ? error.message : "Failed to make request",
-        headers: {},
-        duration: 0,
-        timestamp: new Date().toISOString(),
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    await sendRequest(request, false);
   };
 
   return (

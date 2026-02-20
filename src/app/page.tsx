@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { ApiInput } from "@/components/api-input";
 import { useRouter } from "next/navigation";
+import { storage } from "@/lib/storage";
 
 export default function Home() {
   const router = useRouter();
 
   const handleApiSpecLoad = (spec: any) => {
     // Store spec in localStorage and navigate to playground
-    localStorage.setItem("api-spec", JSON.stringify(spec));
+    storage.setApiSpec(spec);
     router.push("/playground");
   };
 
