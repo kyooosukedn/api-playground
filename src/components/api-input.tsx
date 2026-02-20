@@ -119,10 +119,11 @@ export function ApiInput({ onSpecLoad }: ApiInputProps) {
       </div>
 
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="spec-textarea" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Or paste OpenAPI/JSON specification
         </label>
         <textarea
+          id="spec-textarea"
           value={specText}
           onChange={handleTextChange}
           placeholder='{
