@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { History, Search, Play, Trash2, ChevronRight } from "lucide-react";
 import { ApiRequest } from "@/types";
+import { storage } from "@/lib/storage";
 
 interface RequestHistoryProps {
   history: ApiRequest[];
@@ -30,7 +31,7 @@ export function RequestHistory({ history, onReplay }: RequestHistoryProps) {
 
   const clearHistory = () => {
     if (confirm("Are you sure you want to clear all history?")) {
-      localStorage.removeItem("request-history");
+      storage.clearHistory();
       window.location.reload();
     }
   };

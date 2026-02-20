@@ -4,25 +4,19 @@ import { useEffect, useState } from "react";
 import { RequestHistory } from "@/components/request-history";
 import { ApiRequest } from "@/types";
 import { useRouter } from "next/navigation";
+import { storage } from "@/lib/storage";
 
 export default function HistoryPage() {
   const router = useRouter();
   const [history, setHistory] = useState<ApiRequest[]>([]);
 
   useEffect(() => {
-    const savedHistory = localStorage.getItem("request-history");
-    if (savedHistory) {
-      try {
-        setHistory(JSON.parse(savedHistory));
-      } catch (e) {
-        console.error("Failed to load request history:", e);
-      }
-    }
+    setHistory(storage.getHistory());
   }, []);
 
   const handleReplay = (request: ApiRequest) => {
     // Store the request to replay and navigate to playground
-    localStorage.setItem("replay-request", JSON.stringify(request));
+    storage.setReplayRequest(request);
     router.push("/playground");
   };
 
